@@ -1,0 +1,86 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Button1: TButton
+    Position.X = 220.000000000000000000
+    Position.Y = 428.000000000000000000
+    TabOrder = 0
+    Text = 'Screenshot'
+    OnClick = Button1Click
+  end
+  object Image1: TImage
+    MultiResBitmap = <
+      item
+      end>
+    Position.X = 98.000000000000000000
+    Position.Y = 94.000000000000000000
+    Size.Width = 377.000000000000000000
+    Size.Height = 271.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button2: TButton
+    Position.X = 220.000000000000000000
+    Position.Y = 402.000000000000000000
+    Size.Width = 167.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Text = 'Window Shot'
+    OnClick = Button2Click
+  end
+  object Panel1: TPanel
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 69.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    object Label1: TLabel
+      Position.X = 4.000000000000000000
+      Position.Y = 6.000000000000000000
+      Size.Width = 309.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'This is a window to take a screenshot from'
+    end
+  end
+  object Panel2: TPanel
+    Align = Left
+    Position.Y = 69.000000000000000000
+    Size.Width = 61.000000000000000000
+    Size.Height = 411.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    object Label2: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 388.000000000000000000
+      Size.Width = 51.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Label2'
+    end
+  end
+  object Panel3: TPanel
+    Align = Right
+    Position.X = 579.000000000000000000
+    Position.Y = 69.000000000000000000
+    Size.Width = 61.000000000000000000
+    Size.Height = 411.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    object Label3: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 388.000000000000000000
+      Size.Width = 51.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Label3'
+    end
+  end
+end
