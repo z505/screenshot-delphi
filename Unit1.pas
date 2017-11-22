@@ -37,6 +37,9 @@ uses
  {$IFDEF MSWINDOWS}
   FMX.Platform.Win,
  {$ENDIF}
+ {$IFDEF MACOS}
+  FMX.Platform.Mac,
+ {$ENDIF}
   xscreenshot;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -53,10 +56,10 @@ var bm: TBitmap;
 begin
   bm := TBitmap.Create;
   try
-    TakeWindowShot(WindowHandleToPlatform(self.Handle).wnd, bm);
+    TakeWindowShot(self.Handle, bm);
     Image1.Bitmap.Assign(bm);
   finally
-    bm.Free; bm := nil;
+    bm.Free; // bm := nil;
   end;
 end;
 

@@ -9,28 +9,30 @@
 unit xscreenshot;
 
 interface
-{$IFDEF MSWINDOWS}
-uses Classes {$IFDEF MSWINDOWS} , Windows {$ENDIF}, System.SysUtils, FMX.Graphics, VCL.Forms, VCL.Graphics;
+uses
+  FMX.Types, FMX.Graphics, System.SysUtils,
+ {$IFDEF MSWINDOWS}
+  Classes, Windows, VCL.Forms, VCL.Graphics;
+ {$ENDIF}
+ {$IFDEF MACOS}
+  Macapi.CoreFoundation, Macapi.CocoaTypes, Macapi.CoreGraphics, Macapi.ImageIO,
+  system.Classes;
+ {$ENDIF MACOS}
 
   procedure TakeScreenshot(Dest: FMX.Graphics.TBitmap);
-  procedure TakeWindowShot(h: HWND; Dest: FMX.Graphics.TBitmap);
-{$ENDIF MSWINDOWS}
+  procedure TakeWindowShot(h: TWindowHandle; Dest: FMX.Graphics.TBitmap);
 
-{$IFDEF MACOS}
-uses
-
-  Macapi.CoreFoundation, Macapi.CocoaTypes, Macapi.CoreGraphics, Macapi.ImageIO,
-  FMX.Types,
-  system.Classes, system.SysUtils;
-
-  procedure TakeScreenshot(Dest: TBitmap);
-
-  // TODO:
-  // procedure TakeWindowShot(h: TWinHandle; Dest: FMX.Graphics.TBitmap);
-
-{$ENDIF MACOS}
+ {$IFDEF MSWINDOWS}
+  procedure TakeWindowShotFromHWND(h: HWND; Dest: FMX.Graphics.TBitmap);
+ {$ENDIF MSWINDOWS}
 
 implementation
+
+{$IFDEF MSWINDOWS}
+uses
+  FMX.Platform.Win;
+{$ENDIF}
+
 
 {$IFDEF MSWINDOWS}
 
@@ -93,7 +95,7 @@ begin
   ReleaseDc(0, dc);
 end;
 
-procedure TakeWindowShot(h: HWND; Dest: FMX.Graphics.TBitmap);
+procedure TakeWindowShotFromHWND(h: HWND; Dest: FMX.Graphics.TBitmap);
 var
   Stream: TMemoryStream;
 begin
@@ -107,11 +109,16 @@ begin
   end;
 end;
 
+procedure TakeWindowShot(h: TWindowHandle; Dest: FMX.Graphics.TBitmap);
+begin
+  TakeWindowShotFromHWND(WindowHandleToPlatform(h).wnd, Dest);
+end;
+
 
 procedure TakeScreenshot(Dest: FMX.Graphics.TBitmap);
 begin
   // 0 parameter means full screen shot
-  TakeWindowShot(0, Dest);
+  TakeWindowShotFromHWND(0, Dest);
 end;
 
 
@@ -170,6 +177,27 @@ var
   Stream: TMemoryStream;
 begin
   Stream := nil;
+  ScreenShot := CGWindowListCreateImage(CGRectInfinite,
+    kCGWindowListOptionOnScreenOnly, kCGNullWindowID, kCGWindowImageDefault);
+  if ScreenShot = nil then RaiseLastOSError;
+  try
+    Stream := TMemoryStream.Create;
+    WriteCGImageToStream(ScreenShot, Stream);
+    Stream.Position := 0;
+    Dest.LoadFromStream(Stream);
+  finally
+    CGImageRelease(ScreenShot);
+    Stream.Free;
+  end;
+end;
+
+procedure TakeWindowShot(h: TWindowHandle; Dest: FMX.Graphics.TBitmap);
+var
+  Screenshot: CGImageRef;
+  Stream: TMemoryStream;
+begin
+  Stream := nil;
+ // todo: window handle if logic
   ScreenShot := CGWindowListCreateImage(CGRectInfinite,
     kCGWindowListOptionOnScreenOnly, kCGNullWindowID, kCGWindowImageDefault);
   if ScreenShot = nil then RaiseLastOSError;
