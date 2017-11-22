@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   Caption = 'Form1'
   ClientHeight = 480
-  ClientWidth = 640
+  ClientWidth = 636
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -37,7 +37,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Align = Top
-    Size.Width = 640.000000000000000000
+    Size.Width = 636.000000000000000000
     Size.Height = 69.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
@@ -68,7 +68,7 @@ object Form1: TForm1
   end
   object Panel3: TPanel
     Align = Right
-    Position.X = 579.000000000000000000
+    Position.X = 575.000000000000000000
     Position.Y = 69.000000000000000000
     Size.Width = 61.000000000000000000
     Size.Height = 411.000000000000000000

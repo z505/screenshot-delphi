@@ -1,9 +1,16 @@
+{ Unit to takes a full screenshot or a window shot (window contents)
+
+  Goal is for it to work on MS Windows and MacOS
+
+  Thanks to Tipiweb (Stackoverflow user name) for the initial code of this
+  project
+}
+
 unit xscreenshot;
 
 interface
 {$IFDEF MSWINDOWS}
 uses Classes {$IFDEF MSWINDOWS} , Windows {$ENDIF}, System.SysUtils, FMX.Graphics, VCL.Forms, VCL.Graphics;
-
 
   procedure TakeScreenshot(Dest: FMX.Graphics.TBitmap);
   procedure TakeWindowShot(h: HWND; Dest: FMX.Graphics.TBitmap);
@@ -17,6 +24,10 @@ uses
   system.Classes, system.SysUtils;
 
   procedure TakeScreenshot(Dest: TBitmap);
+
+  // TODO:
+  // procedure TakeWindowShot(h: TWinHandle; Dest: FMX.Graphics.TBitmap);
+
 {$ENDIF MACOS}
 
 implementation
@@ -41,10 +52,11 @@ begin
 {test width and height}
   bm := TBitmap.Create;
 
+  // full screenshot if h = 0
   if h = 0 then begin
     bm.Width := Screen.Width;
     bm.Height := Screen.Height;
-  end else begin
+  end else begin  // else a window shot, not full screen
     GetWinSz(h, WinWidth, WinHeight);
     bm.Width := WinWidth;
     bm.Height := WinHeight;
@@ -81,21 +93,6 @@ begin
   ReleaseDc(0, dc);
 end;
 
-
-procedure TakeScreenshot(Dest: FMX.Graphics.TBitmap);
-var
-  Stream: TMemoryStream;
-begin
-  try
-    Stream := TMemoryStream.Create;
-    WriteWindowsToStream(Stream, 0);
-    Stream.Position := 0;
-    Dest.LoadFromStream(Stream);
-  finally
-    Stream.Free;
-  end;
-end;
-
 procedure TakeWindowShot(h: HWND; Dest: FMX.Graphics.TBitmap);
 var
   Stream: TMemoryStream;
@@ -108,6 +105,13 @@ begin
   finally
     Stream.Free;
   end;
+end;
+
+
+procedure TakeScreenshot(Dest: FMX.Graphics.TBitmap);
+begin
+  // 0 parameter means full screen shot
+  TakeWindowShot(0, Dest);
 end;
 
 
