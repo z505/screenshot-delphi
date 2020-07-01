@@ -28,9 +28,13 @@ uses
 
 implementation
 
-{$IFDEF MSWINDOWS}
+
 uses
+{$IFDEF MSWINDOWS}
   FMX.Platform.Win;
+{$ENDIF}
+{$IFDEF MacOS}
+  FMX.Platform.Mac;
 {$ENDIF}
 
 
@@ -87,8 +91,7 @@ begin
   end;
   //copy from the screen to the bitmap
   BitBlt(bm.Canvas.Handle,0,0,bm.Width,bm.height,Dc,0,0,SRCCOPY);
-
-  bm.SaveToStream(AStream);
+                                        bm.SaveToStream(AStream);
 
   FreeAndNil(bm);
   //release the screen dc
@@ -132,6 +135,12 @@ const
     size: (width: 1.79769e+308; height: 1.79769e+308));
 {$IFEND}
 
+{$IF NOT DECLARED(CGRectNull)}
+  // TODO: Returns pointer or CGRect ?
+  function CGRectNull: CGRect; cdecl; external libCoreGraphics name _PU + 'CGRectNull';
+  {$EXTERNALSYM CGRectNull}
+
+{$IFEND}
 
 function PutBytesCallback(Stream: TStream; NewBytes: Pointer;
   Count: LongInt): LongInt; cdecl;
@@ -198,8 +207,11 @@ var
 begin
   Stream := nil;
  // todo: window handle if logic
-  ScreenShot := CGWindowListCreateImage(CGRectInfinite,
-    kCGWindowListOptionOnScreenOnly, kCGNullWindowID, kCGWindowImageDefault);
+  ScreenShot := CGWindowListCreateImage(CGRectNull,
+    kCGWindowListOptionIncludingWindow or kCGWindowListOptionOnScreenAboveWindow,
+ 	  WindowHandleToPlatform(h).Wnd.windowNumber, { platform specific Mac window ID here}
+	  kCGWindowImageDefault
+    );
   if ScreenShot = nil then RaiseLastOSError;
   try
     Stream := TMemoryStream.Create;
@@ -213,5 +225,25 @@ begin
 end;
 
  {$ENDIF MACOS}
+
+ (* take screenshot of hidden window, objective c source:
+
+ NSImage *img = [[NSImage alloc] initWithCGImage:[window windowImageShot] size:window.frame.size];
+
+// category to NSWindow:
+
+- (CGImageRef)windowImageShot
+{
+    CGWindowID windowID = (CGWindowID)[self windowNumber];
+    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageNominalResolution;
+    CGWindowListOption singleWindowListOptions = kCGWindowListOptionIncludingWindow;
+    CGRect imageBounds = CGRectNull;
+
+    CGImageRef windowImage = CGWindowListCreateImage(imageBounds, singleWindowListOptions, windowID, imageOptions);
+
+    return windowImage;
+}
+
+ *)
 
 end.
