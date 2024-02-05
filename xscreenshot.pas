@@ -102,8 +102,8 @@ procedure TakeWindowShotFromHWND(h: HWND; Dest: FMX.Graphics.TBitmap);
 var
   Stream: TMemoryStream;
 begin
+  Stream := TMemoryStream.Create;
   try
-    Stream := TMemoryStream.Create;
     WriteWindowsToStream(Stream, h);
     Stream.Position := 0;
     Dest.LoadFromStream(Stream);
